@@ -14,42 +14,35 @@ def loadGenderModel():
     source = "https://s3.ap-south-1.amazonaws.com/arunponnusamy/pre-trained-weights/gender_detection.model"
     path = get_file("gender_detection.model", source,
                           cache_subdir="pre-trained", cache_dir=os.getcwd())
-    # load model
+    # Load and return the model
     return load_model(path)
 
-def detectImage(image, model):
+# The function to detect the gender
+def detectGender(image, model):
     if image is None:
         print("Could not read input image")
         exit()
     # Detect faces in the image
     face, confidence = cv.detect_face(image)
     classes = ['Male', 'Female']
-    # loop through detected faces
-    for idx, f in enumerate(face):
-        # get corner points of face rectangle
-        (startX, startY) = f[0], f[1]
-        (endX, endY) = f[2], f[3]
-
-        # draw rectangle over face
-        cv2.rectangle(image, (startX, startY), (endX, endY), (0, 255, 0), 2)
-
-        # crop the detected face region
-        face_crop = np.copy(image[startY:endY, startX:endX])
-
-        # preprocessing for gender detection model
-        face_crop = cv2.resize(face_crop, (96, 96))
-        face_crop = face_crop.astype("float") / 255.0
-        face_crop = img_to_array(face_crop)
-        face_crop = np.expand_dims(face_crop, axis=0)
-
-        # apply gender detection on face
-        conf = model.predict(face_crop)[0]
-        # print(conf)
-        # print(classes)
-
-        # get label with max accuracy
-        idx = np.argmax(conf)
-        label = classes[idx]
-        return label + " | Confidence: " + str(int(max(conf[0], conf[1]) * 100)) + "%"
+    # Take the very first face
+    if len(face) > 0:
+        (startX, startY) = face[0][0], face[0][1]
+        (endX, endY) = face[0][2], face[0][3]
+    else:
+        return "Couldn't detect a face"
+    # Crop the face
+    croppedFace = np.copy(image[startY:endY, startX:endX])
+    # Size and normalize te face
+    croppedFace = cv2.resize(croppedFace, (96, 96))
+    croppedFace = croppedFace.astype("float") / 255.0
+    croppedFace = img_to_array(croppedFace)
+    croppedFace = np.expand_dims(croppedFace, axis=0)
+    # Predict the gender
+    conf = model.predict(croppedFace)[0]
+    # Get the label which has the maximum accuracy
+    idx = np.argmax(conf)
+    label = classes[idx]
+    return label + " | Confidence: " + str(int(max(conf[0], conf[1]) * 100)) + "%"
 
 

@@ -27,7 +27,6 @@ def importData(conn, path):
         label = int(folderName.split("-")[0].replace("person", ""))
         name = folderName.split("-")[1]
         # Form the path for a person's images
-<<<<<<< HEAD
         personPath = path + "/" + folderName
         # Retrieve the image names
         fileNames = os.listdir(personPath)
@@ -40,20 +39,6 @@ def importData(conn, path):
             imagePath = personPath + "/" + fileName
             # Read the image with the help of OpenCV
             image = cv2.imread(imagePath)
-=======
-        subject_dir_path = path + "/" + folderName
-        # Retrieve the image names
-        subject_images_names = os.listdir(subject_dir_path)
-        # Iterate over the images
-        for image_name in subject_images_names:
-            # There may be system files which are starts with '.' (dot)
-            if image_name.startswith("."):
-                continue
-            # Form a path for an image
-            image_path = subject_dir_path + "/" + image_name
-            # Read the image with the help of OpenCV
-            image = cv2.imread(image_path)
->>>>>>> 038f78e86069300f87e6849d8cf357ba4cb1cfd6
             # Connect to the storage file where the data is kept...
             # ...If there is not such file, then it will be created...
             # ...automatically.
@@ -62,7 +47,6 @@ def importData(conn, path):
                                 label text,
                                 image blob
                             )""")
-<<<<<<< HEAD
             insertPicture(conn, imagePath, label, name)
             # Do not close the database since, retriveDataFromDatabase() will use it.
             # conn.close()
@@ -72,17 +56,6 @@ def importData(conn, path):
             cv2.waitKey(30)
             # Detect the face in the image
             face, rect = fr.detectFace(image)
-=======
-
-            insertPicture(conn, image_path, label, name)
-            conn.close()
-            # Display an image window to show the image
-            cv2.imshow("Training on image...", cv2.resize(image, (400, 500)))
-            cv2.waitKey(30)
-            # Detect the face in the image
-            face, rect = fr.detect_face(image)
-
->>>>>>> 038f78e86069300f87e6849d8cf357ba4cb1cfd6
             # Make sure there is a face
             if face is not None:
                 # Put the face and label into corresponding arrays
@@ -91,21 +64,11 @@ def importData(conn, path):
     cv2.destroyAllWindows()
 
 # This function inserts a new picture into the database
-<<<<<<< HEAD
 def insertPicture(conn, path, label, name):
     # Handle the possible exceptions
     try:
         with open(path, 'rb') as imageFile:
             img = imageFile.read()
-=======
-def insertPicture(conn, picture_file, label, names):
-    # Handle the possible exceptions
-    try:
-        with open(picture_file, 'rb') as input_file:
-            img = input_file.read()
-            # See if the given person does exist
-            name = names[label]
->>>>>>> 038f78e86069300f87e6849d8cf357ba4cb1cfd6
             sql = '''INSERT INTO person (name, label, image) VALUES (?, ?, ?);'''
             conn.execute(sql, [name, label, sqlite3.Binary(img)])
             conn.commit()
@@ -136,19 +99,11 @@ def retriveDataFromDatabase(conn, names):
         if int(label) > maxValue:
             maxValue = int(label)
         # Display the image
-<<<<<<< HEAD
         height, width = image.shape[:2]
         cv2.imshow("Train image", cv2.resize(image, (height, width)))
         cv2.waitKey(30)
         # Detect the face
         face, rect = fr.detectFace(image)
-=======
-        cv2.imshow("Training on image...", cv2.resize(image, (400, 500)))
-        cv2.waitKey(20)
-
-        # Detect the face
-        face, rect = fr.detect_face(image)
->>>>>>> 038f78e86069300f87e6849d8cf357ba4cb1cfd6
         # Make sure there is a face
         if face is not None:
             # Put the face and label into corresponding arrays
