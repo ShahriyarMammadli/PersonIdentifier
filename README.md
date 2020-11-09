@@ -36,4 +36,5 @@ If you do not import the external images then you should comment it again, other
 When system does not recognize a person a dialbox appears to ask the name.
 
 ![DialogBox](/dialogbox.png)
+
 Consider that Fullname field is considered unique for the sake of simplicity. Thus, if you inputted more than one person with same name they will be considered as a same person.
