@@ -39,7 +39,7 @@ faceRecognizer = cv2.face.LBPHFaceRecognizer_create()
 # Train the model
 faceRecognizer.train(faces, np.array(labels))
 
-cascadePath = "haarcascade_frontalface_alt.xml"
+cascadePath = "opencv-files/haarcascade_frontalface_alt.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 
 class MyVideoCapture:
